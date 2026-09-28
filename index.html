@@ -64,21 +64,31 @@
   <script>
 
     let lastResult = null;
+    let scanSent = false;
 
 
     function onScanSuccess(decodedText, decodedResult) {
+
+      if (scanSent) {
+        return;
+      }
+
 
       if (decodedText === lastResult) {
         return;
       }
 
+
       lastResult = decodedText;
+      scanSent = true;
 
 
       const result =
         document.getElementById("result");
 
+
       result.style.display = "block";
+
 
       result.textContent =
         "Scanned: " + decodedText;
@@ -86,7 +96,12 @@
 
       /*
        * Send the barcode back to the
-       * Apps Script inventory page.
+       * Apps Script window.
+       *
+       * IMPORTANT:
+       * The scanner was opened by the
+       * Apps Script page, so window.opener
+       * refers to that page.
        */
       if (window.opener) {
 
@@ -101,18 +116,22 @@
       }
 
 
+      /*
+       * Close scanner after the message
+       * has been sent.
+       */
       setTimeout(function() {
 
-        lastResult = null;
+        window.close();
 
-      }, 2000);
+      }, 700);
 
     }
 
 
     function onScanError(errorMessage) {
 
-      // Ignore normal scanning errors.
+      // Normal scanning errors are ignored.
 
     }
 
