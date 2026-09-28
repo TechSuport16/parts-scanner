@@ -13,9 +13,11 @@
 
   <title>Parts Scanner</title>
 
+
   <script
     src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js">
   </script>
+
 
   <style>
 
@@ -67,7 +69,10 @@
     let scanSent = false;
 
 
-    function onScanSuccess(decodedText, decodedResult) {
+    function onScanSuccess(
+      decodedText,
+      decodedResult
+    ) {
 
       if (scanSent) {
         return;
@@ -95,54 +100,56 @@
 
 
       /*
-       * Send the barcode back to the
-       * Apps Script window.
-       *
-       * IMPORTANT:
-       * The scanner was opened by the
-       * Apps Script page, so window.opener
-       * refers to that page.
+       * Send barcode to the Apps Script
+       * inventory page.
        */
       if (window.opener) {
 
         window.opener.postMessage(
+
           {
             type: "PART_SCANNED",
             partId: decodedText
           },
-          "*"
+
+          "https://script.google.com"
+
         );
 
       }
 
 
       /*
-       * Close scanner after the message
-       * has been sent.
+       * Give the message a moment to reach
+       * the Apps Script page, then close
+       * the scanner window.
        */
       setTimeout(function() {
 
         window.close();
 
-      }, 700);
+      }, 500);
 
     }
 
 
     function onScanError(errorMessage) {
 
-      // Normal scanning errors are ignored.
+      // Ignore normal scanning errors.
 
     }
 
 
     const scanner =
       new Html5QrcodeScanner(
+
         "qr-reader",
+
         {
           fps: 10,
           qrbox: 250
         }
+
       );
 
 
