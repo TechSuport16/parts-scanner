@@ -1,0 +1,139 @@
+<!doctype html>
+
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  >
+
+  <title>Parts Scanner</title>
+
+  <script
+    src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js">
+  </script>
+
+  <style>
+
+    body {
+      margin: 0;
+      padding: 20px;
+      background: #212529;
+      color: white;
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+    }
+
+    #qr-reader {
+      width: 500px;
+      max-width: 100%;
+      margin: 0 auto;
+    }
+
+    #result {
+      margin-top: 20px;
+      padding: 15px;
+      background: #198754;
+      color: white;
+      border-radius: 8px;
+      display: none;
+    }
+
+  </style>
+
+</head>
+
+
+<body>
+
+  <h2>Scan Part Barcode</h2>
+
+  <div id="qr-reader"></div>
+
+  <div id="result"></div>
+
+
+  <script>
+
+    let lastResult = null;
+
+
+    function onScanSuccess(decodedText, decodedResult) {
+
+      if (decodedText === lastResult) {
+        return;
+      }
+
+      lastResult = decodedText;
+
+
+      const result =
+        document.getElementById("result");
+
+      result.style.display = "block";
+
+      result.textContent =
+        "Scanned: " + decodedText;
+
+
+      /*
+       * Send the barcode back to the
+       * Apps Script inventory page.
+       */
+      if (window.opener) {
+
+        window.opener.postMessage(
+          {
+            type: "PART_SCANNED",
+            partId: decodedText
+          },
+          "*"
+        );
+
+      }
+
+
+      setTimeout(function() {
+
+        lastResult = null;
+
+      }, 2000);
+
+    }
+
+
+    function onScanError(errorMessage) {
+
+      // Ignore normal scanning errors.
+
+    }
+
+
+    const scanner =
+      new Html5QrcodeScanner(
+        "qr-reader",
+        {
+          fps: 10,
+          qrbox: 250
+        }
+      );
+
+
+    scanner.render(
+      onScanSuccess,
+      onScanError
+    );
+
+  </script>
+
+</body>
+
+</html>
