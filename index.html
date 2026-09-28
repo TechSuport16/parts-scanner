@@ -22,31 +22,54 @@
   <style>
 
     body {
+
       margin: 0;
+
       padding: 20px;
+
       background: #212529;
+
       color: white;
+
       font-family: Arial, sans-serif;
+
       text-align: center;
+
     }
+
 
     h2 {
+
       margin-bottom: 20px;
+
     }
+
 
     #qr-reader {
+
       width: 500px;
+
       max-width: 100%;
+
       margin: 0 auto;
+
     }
 
+
     #result {
+
       margin-top: 20px;
+
       padding: 15px;
+
       background: #198754;
+
       color: white;
+
       border-radius: 8px;
+
       display: none;
+
     }
 
   </style>
@@ -56,34 +79,45 @@
 
 <body>
 
+
   <h2>Scan Part Barcode</h2>
 
+
   <div id="qr-reader"></div>
+
 
   <div id="result"></div>
 
 
   <script>
 
+
     let lastResult = null;
 
     let scanSent = false;
 
 
-    function onScanSuccess(decodedText, decodedResult) {
+    function onScanSuccess(
+      decodedText,
+      decodedResult
+    ) {
 
 
       /*
-       * Prevent multiple submissions.
+       * Don't send multiple scans.
        */
 
       if (scanSent) {
+
         return;
+
       }
 
 
       if (decodedText === lastResult) {
+
         return;
+
       }
 
 
@@ -93,23 +127,27 @@
 
 
       /*
-       * Display the scanned barcode.
+       * Show barcode.
        */
 
       const result =
-        document.getElementById("result");
+        document.getElementById(
+          "result"
+        );
 
 
-      result.style.display = "block";
+      result.style.display =
+        "block";
 
 
       result.textContent =
-        "Scanned: " + decodedText;
+        "Scanned: " +
+        decodedText;
 
 
       /*
        * Send barcode back to the
-       * Apps Script window.
+       * Apps Script page.
        */
 
       if (window.opener) {
@@ -117,8 +155,13 @@
         window.opener.postMessage(
 
           {
-            type: "PART_SCANNED",
-            partId: decodedText
+
+            type:
+              "PART_SCANNED",
+
+            partId:
+              decodedText
+
           },
 
           "*"
@@ -129,30 +172,35 @@
 
 
       /*
-       * Close scanner after giving the
-       * message time to reach Apps Script.
+       * Return to the inventory page.
        */
 
-      setTimeout(function() {
+      setTimeout(
+        function() {
 
-        window.close();
+          window.close();
 
-      }, 1000);
+        },
+        1000
+      );
 
     }
 
 
-    function onScanError(errorMessage) {
+    function onScanError(
+      errorMessage
+    ) {
 
       /*
-       * Normal scanning errors are ignored.
+       * Normal scanner errors
+       * are ignored.
        */
 
     }
 
 
     /*
-     * Start scanner.
+     * Start QR/barcode scanner.
      */
 
     const scanner =
@@ -161,8 +209,11 @@
         "qr-reader",
 
         {
+
           fps: 10,
+
           qrbox: 250
+
         }
 
       );
@@ -176,7 +227,9 @@
 
     );
 
+
   </script>
+
 
 </body>
 
